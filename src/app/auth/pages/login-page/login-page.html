@@ -1,0 +1,20 @@
+<div class="login-container">
+  <h2>Login</h2>
+
+  <div class="field">
+    <label>Email</label>
+    <input pInputText [(ngModel)]="email" />
+  </div>
+
+  <div class="field">
+    <label>Password</label>
+    <p-password [(ngModel)]="password" [feedback]="false"></p-password>
+  </div>
+
+  <p-button
+    label="Login"
+    icon="pi pi-sign-in"
+    class="mt-3"
+    (onClick)="login()">
+  </p-button>
+</div>
