@@ -1,0 +1,49 @@
+.app-header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.toolbar {
+  padding: 0.75rem 2rem;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.toolbar-right p-button {
+  margin-left: 0.75rem;
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1f2937;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  font-size: 1.3rem;
+  color: #10b981;
+}
+
+.btn-text ::ng-deep .p-button {
+  background: transparent;
+}
+
+.btn-primary ::ng-deep .p-button {
+  border-radius: 6px;
+}
+
+.btn-danger ::ng-deep .p-button {
+  border-radius: 6px;
+}

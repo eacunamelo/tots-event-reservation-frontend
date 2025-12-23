@@ -1,30 +1,47 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../core/services/api.service';
-
-export interface Reservation {
-  id: number;
-  event_name: string;
-  start_time: string;
-  end_time: string;
-  space: {
-    id: number;
-    name: string;
-  };
-}
+import { environment } from '../../../environments/environment';
+import { Reservation } from '../models/reservations.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ReservationService {
+export class ReservationsService {
 
-  constructor(private api: ApiService) {}
+  private apiUrl = environment.apiUrl + 'reservations';
 
-  getAll(): Observable<Reservation[]> {
-    return this.api.get<Reservation[]>('/reservations');
+  constructor(private http: HttpClient) {}
+
+  getUserReservations(): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(this.apiUrl);
   }
 
-  delete(id: number): Observable<void> {
-    return this.api.delete<void>(`/reservations/${id}`);
+  getReservationById(id: number): Observable<Reservation> {
+    return this.http.get<Reservation>(`${this.apiUrl}/${id}`);
+  }
+
+  createReservation(
+    data: Omit<Reservation, 'id' | 'user_id' | 'created_at' | 'updated_at'>
+  ): Observable<Reservation> {
+    return this.http.post<Reservation>(this.apiUrl, data);
+  }
+
+
+  updateReservation(
+    id: number,
+    data: Partial<Omit<Reservation, 'id' | 'created_at' | 'updated_at'>>
+  ): Observable<Reservation> {
+    return this.http.put<Reservation>(`${this.apiUrl}/${id}`, data);
+  }
+
+  deleteReservation(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getBySpace(spaceId: number): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(
+      `${environment.apiUrl}spaces/${spaceId}/reservations`
+    );
   }
 }

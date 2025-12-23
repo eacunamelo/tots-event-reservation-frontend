@@ -1,0 +1,73 @@
+<main class="spaces-container">
+  <div class="spaces-wrapper">
+
+    <h2 class="section-title">Espacios disponibles</h2>
+
+    <div class="spaces-grid">
+
+      <!-- CARD ADMIN -->
+      <div
+        class="space-card add-space-card"
+        *ngIf="isAdmin()"
+      >
+        <button
+          type="button"
+          class="add-space-btn"
+          (click)="goToCreateSpace()"
+        >
+          <i class="pi pi-plus"></i>
+        </button>
+
+        <h3>Crear espacio</h3>
+        <p class="description">
+          Agrega un nuevo espacio para reservas
+        </p>
+      </div>
+
+      <!-- CARDS DE ESPACIOS -->
+      <div
+        class="space-card"
+        *ngFor="let space of (spaces$ | async); trackBy: trackById"
+      >
+
+        <div class="image-wrapper">
+          <img
+            [src]="space.image_url"
+            alt="Imagen del espacio"
+            class="space-image"
+          />
+        </div>
+
+        <h3>{{ space.name }}</h3>
+        <p class="description">{{ space.description }}</p>
+
+        <div class="capacity">
+          <i class="pi pi-users"></i>
+          <span>{{ space.capacity }} personas</span>
+        </div>
+
+        <button
+          pButton
+          type="button"
+          label="Reservar"
+          icon="pi pi-calendar"
+          class="reserve-btn"
+          (click)="goToReservationForm(space.id)"
+          *ngIf="!isAdmin()"
+        ></button>
+
+        <button
+          pButton
+          type="button"
+          label="Editar"
+          icon="pi pi-pencil"
+          class="p-button-secondary reserve-btn"
+          (click)="goToEditSpace(space.id)"
+          *ngIf="isAdmin()"
+        ></button>
+
+      </div>
+    </div>
+
+  </div>
+</main>

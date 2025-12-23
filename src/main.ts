@@ -4,16 +4,21 @@ import { appConfig } from './app/app.config';
 
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { providePrimeNG } from 'primeng/config';
+import { MessageService } from 'primeng/api';
+
 import Lara from '@primeng/themes/lara';
 
 bootstrapApplication(App, {
   providers: [
     ...appConfig.providers,
     provideAnimations(),
+
     providePrimeNG({
       theme: {
         preset: Lara
       }
-    })
+    }),
+
+    MessageService
   ]
 });

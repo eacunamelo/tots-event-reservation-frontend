@@ -1,0 +1,65 @@
+<header class="app-header">
+  <p-toolbar class="toolbar">
+
+    <div class="toolbar-left">
+      <span class="logo" (click)="goToSpaces()">
+        <i class="pi pi-map-marker logo-icon"></i>
+        SpaceFinder
+      </span>
+    </div>
+
+    <div class="toolbar-right">
+
+      <!-- NO autenticado -->
+      <ng-container *ngIf="!isAuthenticated">
+        <p-button
+          label="Login"
+          icon="pi pi-sign-in"
+          severity="secondary"
+          class="btn-text"
+          (onClick)="goToLogin()">
+        </p-button>
+
+        <p-button
+          label="Sign Up"
+          icon="pi pi-user-plus"
+          severity="success"
+          class="btn-primary"
+          (onClick)="goToRegister()">
+        </p-button>
+      </ng-container>
+
+      <!-- Autenticado -->
+      <ng-container *ngIf="isAuthenticated">
+
+        <p-button
+          *ngIf="isAdmin()"
+          label="Espacios"
+          icon="pi pi-building"
+          severity="secondary"
+          class="btn-text"
+          (onClick)="goToSpaces()">
+        </p-button>
+
+        <p-button
+          *ngIf="!isAdmin()"
+          label="Mis Reservas"
+          icon="pi pi-calendar"
+          severity="secondary"
+          class="btn-text"
+          (onClick)="goToReservations()">
+        </p-button>
+
+        <p-button
+          label="Logout"
+          icon="pi pi-sign-out"
+          severity="danger"
+          class="btn-danger"
+          (onClick)="logout()">
+        </p-button>
+
+      </ng-container>
+
+    </div>
+  </p-toolbar>
+</header>

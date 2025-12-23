@@ -1,0 +1,100 @@
+.register-page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f9fafb, #eef2ff);
+  padding: 1rem;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 2.2rem;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 1.8rem;
+}
+
+.register-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.3rem;
+}
+
+.register-header p {
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.2rem;
+}
+
+.field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.full-width,
+.full-width input {
+  width: 100%;
+}
+
+.field input,
+::ng-deep .password-full input {
+  height: 46px;
+  width: 100%;
+  font-size: 0.95rem;
+  padding: 0 12px 0 36px;
+  border-radius: 8px;
+}
+
+::ng-deep .p-input-icon-left > i {
+  left: 12px;
+  color: #9ca3af;
+}
+
+::ng-deep .password-full {
+  width: 100%;
+}
+
+::ng-deep .password-full .p-password-input {
+  width: 100%;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.6rem;
+}
+
+.register-btn {
+  width: 100%;
+}
+
+.register-btn ::ng-deep .p-button {
+  height: 48px;
+  width: 100%;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.register-btn ::ng-deep .p-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+}

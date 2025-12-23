@@ -1,0 +1,162 @@
+.space-form-section {
+  min-height: 100vh;
+  background: #f9fafb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.space-form-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 520px;
+  padding: 2rem;
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+}
+
+.title {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 1.8rem;
+  color: #111827;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.2rem;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+input,
+textarea {
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+textarea {
+  height: 90px;
+  padding-top: 10px;
+  resize: none;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.image-upload-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.image-preview {
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px dashed #d1d5db;
+  background: #f3f4f6;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #eef2ff;
+  color: #2563eb;
+  border: 1px dashed #2563eb;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  width: fit-content;
+}
+
+.upload-btn:hover {
+  background: #e0e7ff;
+}
+
+.file-name {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.submit-btn {
+  margin-top: 1.5rem;
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submit-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.image-preview {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 180px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.file-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  background: #f3f4f6;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #374151;
+}
+
+.file-btn:hover {
+  background: #e5e7eb;
+}
+
+.file-name {
+  font-size: 0.8rem;
+  color: #6b7280;
+}

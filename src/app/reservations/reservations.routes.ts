@@ -1,9 +1,16 @@
 import { Routes } from '@angular/router';
-import { ReservationsPage } from './pages/reservations-page/reservations-page';
 
 export const RESERVATION_ROUTES: Routes = [
   {
     path: '',
-    component: ReservationsPage
+    loadComponent: () =>
+      import('./pages/reservations-page/reservations-page')
+        .then(m => m.ReservationsPage)
+  },
+  {
+    path: 'new/:spaceId',
+    loadComponent: () =>
+      import('./pages/form/reservation-form-page')
+        .then(m => m.ReservationFormPage)
   }
 ];

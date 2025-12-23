@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReservationService, Reservation } from '../../services/reservation.service';
+import { Observable } from 'rxjs';
+
+import { ReservationsService } from '../../services/reservation.service';
+import { Reservation } from '../../models/reservations.model';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   standalone: true,
@@ -11,32 +15,43 @@ import { ReservationService, Reservation } from '../../services/reservation.serv
 })
 export class ReservationsPage implements OnInit {
 
-  reservations: Reservation[] = [];
+  reservations$!: Observable<Reservation[]>;
   loading = true;
 
-  constructor(private reservationService: ReservationService) {}
+  constructor(
+    private reservationService: ReservationsService,
+    private notification: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadReservations();
   }
 
-  loadReservations() {
-    this.reservationService.getAll().subscribe({
-      next: res => {
-        this.reservations = res;
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      }
-    });
+  loadReservations(): void {
+    this.reservations$ = this.reservationService.getUserReservations();
+    this.loading = false;
   }
 
-  deleteReservation(id: number) {
-    if (!confirm('¿Eliminar reserva?')) return;
+  deleteReservation(id: number): void {
+    this.notification.showWarn(
+      '¿Deseas cancelar esta reserva?',
+      'Confirmación requerida'
+    );
 
-    this.reservationService.delete(id).subscribe(() => {
-      this.reservations = this.reservations.filter(r => r.id !== id);
+    if (!confirm('Esta acción no se puede deshacer')) return;
+
+    this.reservationService.deleteReservation(id).subscribe({
+      next: () => {
+        this.notification.showSuccess(
+          'La reserva fue cancelada correctamente'
+        );
+        this.loadReservations();
+      },
+      error: () => {
+        this.notification.showError(
+          'No se pudo cancelar la reserva'
+        );
+      }
     });
   }
 }

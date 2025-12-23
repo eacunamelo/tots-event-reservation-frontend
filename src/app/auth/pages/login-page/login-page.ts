@@ -19,7 +19,8 @@ import { AuthService } from '../../services/auth.service';
     InputTextModule,
     PasswordModule
   ],
-  templateUrl: './login-page.html'
+  templateUrl: './login-page.html',
+  styleUrl: './login-page.css'
 })
 export class LoginPage {
 
@@ -32,9 +33,11 @@ export class LoginPage {
   ) {}
 
   login() {
-    this.auth.login(this.email, this.password).subscribe(res => {
-      this.auth.saveToken(res.access_token);
-      this.router.navigate(['/reservations']);
+    this.auth.login({
+      email: this.email,
+      password: this.password
+    }).subscribe(res => {
+      this.router.navigate(['/spaces']);
     });
   }
 }

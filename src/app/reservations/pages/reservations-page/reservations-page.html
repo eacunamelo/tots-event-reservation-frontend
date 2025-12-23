@@ -1,30 +1,51 @@
-<h2>Mis Reservas</h2>
+<section class="reservations-page">
 
-<div *ngIf="loading">Cargando...</div>
+  <h2 class="page-title">Mis Reservas</h2>
 
-<table *ngIf="!loading && reservations.length > 0">
-  <thead>
-    <tr>
-      <th>Evento</th>
-      <th>Espacio</th>
-      <th>Inicio</th>
-      <th>Fin</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let r of reservations">
-      <td>{{ r.event_name }}</td>
-      <td>{{ r.space?.name }}</td>
-      <td>{{ r.start_time }}</td>
-      <td>{{ r.end_time }}</td>
-      <td>
-        <button (click)="deleteReservation(r.id)">Eliminar</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <ng-container *ngIf="reservations$ | async as reservations; else loadingTpl">
 
-<div *ngIf="!loading && reservations.length === 0">
-  No hay reservas registradas
-</div>
+    <div class="table-wrapper" *ngIf="reservations.length > 0">
+      <table class="reservations-table">
+        <thead>
+          <tr>
+            <th>Evento</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th class="actions-col"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let r of reservations">
+            <td class="event">
+              <i class="pi pi-calendar"></i>
+              {{ r.event_name }}
+            </td>
+            <td>{{ r.start_time | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ r.end_time | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="actions">
+              <button
+                class="btn-delete"
+                (click)="deleteReservation(r.id)">
+                Cancelar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" *ngIf="reservations.length === 0">
+      <i class="pi pi-inbox"></i>
+      <p>No tienes reservas registradas</p>
+    </div>
+
+  </ng-container>
+
+  <ng-template #loadingTpl>
+    <div class="loading">
+      <p>Cargando reservas...</p>
+    </div>
+  </ng-template>
+
+</section>
