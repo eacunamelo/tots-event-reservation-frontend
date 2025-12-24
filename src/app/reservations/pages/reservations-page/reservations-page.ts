@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, of, defer } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 
 import { ReservationsService } from '../../services/reservation.service';
 import { Reservation } from '../../models/reservations.model';
@@ -16,7 +17,9 @@ import { NotificationService } from '../../../core/services/notification.service
 export class ReservationsPage implements OnInit {
 
   reservations$!: Observable<Reservation[]>;
-  loading = true;
+
+  isLoading = false;
+  deletingId: number | null = null;
 
   constructor(
     private reservationService: ReservationsService,
@@ -27,30 +30,54 @@ export class ReservationsPage implements OnInit {
     this.loadReservations();
   }
 
-  loadReservations(): void {
-    this.reservations$ = this.reservationService.getUserReservations();
-    this.loading = false;
+  private buildReservationsStream(): Observable<Reservation[]> {
+    return defer(() => {
+      this.isLoading = true;
+
+      return this.reservationService.getUserReservations().pipe(
+        catchError(() => {
+          this.notification.showError(
+            'No se pudieron cargar las reservas'
+          );
+          return of([] as Reservation[]);
+        }),
+        finalize(() => {
+          this.isLoading = false;
+        })
+      );
+    });
   }
 
-  deleteReservation(id: number): void {
-    this.notification.showWarn(
-      '¿Deseas cancelar esta reserva?',
-      'Confirmación requerida'
-    );
+  loadReservations(): void {
+    this.reservations$ = this.buildReservationsStream();
+  }
 
-    if (!confirm('Esta acción no se puede deshacer')) return;
+  confirmDelete(id: number): void {
+    this.deletingId = id;
+  }
+
+  cancelDelete(): void {
+    this.deletingId = null;
+  }
+
+  deleteReservation(): void {
+    if (!this.deletingId) return;
+
+    const id = this.deletingId;
 
     this.reservationService.deleteReservation(id).subscribe({
       next: () => {
         this.notification.showSuccess(
           'La reserva fue cancelada correctamente'
         );
+        this.deletingId = null;
         this.loadReservations();
       },
       error: () => {
         this.notification.showError(
           'No se pudo cancelar la reserva'
         );
+        this.deletingId = null;
       }
     });
   }
