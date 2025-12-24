@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -34,6 +34,7 @@ export class LoginPage {
   constructor(
     private auth: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private notification: NotificationService
   ) {}
 
@@ -61,7 +62,8 @@ export class LoginPage {
     )
     .subscribe({
       next: () => {
-        this.router.navigate(['/spaces']);
+        const redirect = this.route.snapshot.queryParamMap.get('redirect');
+        this.router.navigateByUrl(redirect || '/spaces');
       },
       error: (error) => {
         if (error.status === 401) {
