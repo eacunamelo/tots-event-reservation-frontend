@@ -9,6 +9,7 @@ import { PasswordModule } from 'primeng/password';
 
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   standalone: true,
@@ -30,6 +31,8 @@ export class RegisterPage {
   password = '';
   confirmPassword = '';
 
+  isSubmitting = false;
+
   constructor(
     private auth: AuthService,
     private router: Router,
@@ -37,6 +40,8 @@ export class RegisterPage {
   ) {}
 
   register(): void {
+    if (this.isSubmitting) return;
+
     if (!this.name || !this.email || !this.password || !this.confirmPassword) {
       this.notification.showWarn(
         'Completa todos los campos',
@@ -53,12 +58,20 @@ export class RegisterPage {
       return;
     }
 
+    this.isSubmitting = true;
+
     this.auth.register({
       name: this.name,
       email: this.email,
       password: this.password,
       password_confirmation: this.confirmPassword
-    }).subscribe({
+    })
+    .pipe(
+      finalize(() => {
+        this.isSubmitting = false;
+      })
+    )
+    .subscribe({
       next: () => {
         this.notification.showSuccess(
           'Cuenta creada correctamente'

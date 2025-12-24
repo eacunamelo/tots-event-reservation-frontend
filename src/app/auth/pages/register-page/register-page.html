@@ -15,6 +15,7 @@
           pInputText
           [(ngModel)]="name"
           placeholder="Tu nombre completo"
+          [disabled]="isSubmitting"
         />
       </span>
     </div>
@@ -29,6 +30,7 @@
           pInputText
           [(ngModel)]="email"
           placeholder="correo@ejemplo.com"
+          [disabled]="isSubmitting"
         />
       </span>
     </div>
@@ -42,6 +44,7 @@
         toggleMask="true"
         placeholder="••••••••"
         styleClass="password-full"
+        [disabled]="isSubmitting"
       ></p-password>
     </div>
 
@@ -54,14 +57,16 @@
         toggleMask="true"
         placeholder="••••••••"
         styleClass="password-full"
+        [disabled]="isSubmitting"
       ></p-password>
     </div>
 
     <div class="button-wrapper">
       <p-button
-        label="Crear cuenta"
+        [label]="isSubmitting ? 'Creando cuenta...' : 'Crear cuenta'"
         icon="pi pi-user-plus"
         class="register-btn"
+        [disabled]="isSubmitting"
         (onClick)="register()">
       </p-button>
     </div>
