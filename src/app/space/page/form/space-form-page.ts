@@ -24,8 +24,10 @@ export class SpaceFormPage implements OnInit {
   space: Space | null = null;
 
   selectedFile: File | null = null;
-
   imagePreview: string | null = null;
+
+  isLoading = false; 
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -51,16 +53,26 @@ export class SpaceFormPage implements OnInit {
   }
 
   private loadSpace(id: number): void {
-    this.spacesService.getSpaceById(id).subscribe(space => {
-      this.space = space;
+    this.isLoading = true;
 
-      this.spaceForm.patchValue({
-        name: space.name,
-        description: space.description,
-        capacity: space.capacity
-      });
+    this.spacesService.getSpaceById(id).subscribe({
+      next: (space) => {
+        this.space = space;
 
-      this.imagePreview = space.image_url;
+        this.spaceForm.patchValue({
+          name: space.name,
+          description: space.description,
+          capacity: space.capacity
+        });
+
+        this.imagePreview = space.image_url;
+      },
+      error: () => {
+        this.notification.showError('No se pudo cargar el espacio');
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
     });
   }
 
@@ -80,9 +92,12 @@ export class SpaceFormPage implements OnInit {
 
   submit(): void {
     if (this.spaceForm.invalid) {
+      this.spaceForm.markAllAsTouched();
       this.notification.showWarn('Completa todos los campos obligatorios');
       return;
     }
+
+    this.isSubmitting = true;
 
     const formData = new FormData();
     formData.append('name', this.spaceForm.value.name);
@@ -100,12 +115,17 @@ export class SpaceFormPage implements OnInit {
     request$.subscribe({
       next: () => {
         this.notification.showSuccess(
-          this.isEditMode ? 'Espacio actualizado correctamente' : 'Espacio creado correctamente'
+          this.isEditMode
+            ? 'Espacio actualizado correctamente'
+            : 'Espacio creado correctamente'
         );
         this.router.navigate(['/spaces']);
       },
       error: () => {
         this.notification.showError('Error al guardar el espacio');
+      },
+      complete: () => {
+        this.isSubmitting = false;
       }
     });
   }

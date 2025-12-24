@@ -3,9 +3,12 @@
 
     <h2 class="section-title">Espacios disponibles</h2>
 
-    <div class="spaces-grid">
+    <div class="loading" *ngIf="isLoading">
+      Cargando espacios...
+    </div>
 
-      <!-- CARD ADMIN -->
+    <div class="spaces-grid" *ngIf="!isLoading">
+
       <div
         class="space-card add-space-card"
         *ngIf="isAdmin()"
@@ -24,49 +27,60 @@
         </p>
       </div>
 
-      <!-- CARDS DE ESPACIOS -->
-      <div
-        class="space-card"
-        *ngFor="let space of (spaces$ | async); trackBy: trackById"
-      >
+      <ng-container *ngIf="spaces$ | async as spaces">
 
-        <div class="image-wrapper">
-          <img
-            [src]="space.image_url"
-            alt="Imagen del espacio"
-            class="space-image"
-          />
+        <div
+          class="empty-state"
+          *ngIf="spaces.length === 0"
+        >
+          No hay espacios disponibles
         </div>
 
-        <h3>{{ space.name }}</h3>
-        <p class="description">{{ space.description }}</p>
+        <div
+          class="space-card"
+          *ngFor="let space of spaces; trackBy: trackById"
+        >
 
-        <div class="capacity">
-          <i class="pi pi-users"></i>
-          <span>{{ space.capacity }} personas</span>
+          <div class="image-wrapper">
+            <img
+              [src]="space.image_url"
+              alt="Imagen del espacio"
+              class="space-image"
+            />
+          </div>
+
+          <h3>{{ space.name }}</h3>
+          <p class="description">{{ space.description }}</p>
+
+          <div class="capacity">
+            <i class="pi pi-users"></i>
+            <span>{{ space.capacity }} personas</span>
+          </div>
+
+          <button
+            pButton
+            type="button"
+            label="Reservar"
+            icon="pi pi-calendar"
+            class="reserve-btn"
+            (click)="goToReservationForm(space.id)"
+            *ngIf="!isAdmin()"
+          ></button>
+
+          <button
+            pButton
+            type="button"
+            label="Editar"
+            icon="pi pi-pencil"
+            class="p-button-secondary reserve-btn"
+            (click)="goToEditSpace(space.id)"
+            *ngIf="isAdmin()"
+          ></button>
+
         </div>
 
-        <button
-          pButton
-          type="button"
-          label="Reservar"
-          icon="pi pi-calendar"
-          class="reserve-btn"
-          (click)="goToReservationForm(space.id)"
-          *ngIf="!isAdmin()"
-        ></button>
+      </ng-container>
 
-        <button
-          pButton
-          type="button"
-          label="Editar"
-          icon="pi pi-pencil"
-          class="p-button-secondary reserve-btn"
-          (click)="goToEditSpace(space.id)"
-          *ngIf="isAdmin()"
-        ></button>
-
-      </div>
     </div>
 
   </div>

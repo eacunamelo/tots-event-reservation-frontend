@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of, defer } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 
 import { SpacesService } from '../services/space.service';
 import { AuthService } from '../../auth/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { ButtonModule } from 'primeng/button';
 import { Space } from '../models/space.model';
 
@@ -19,15 +21,12 @@ export class SpacesListPage implements OnInit {
 
   spaces$!: Observable<Space[]>;
 
-  searchParams = {
-    type: '',
-    capacity: '',
-    date: ''
-  };
+  isLoading = false;
 
   constructor(
     private spacesService: SpacesService,
     private authService: AuthService,
+    private notification: NotificationService,
     private router: Router
   ) {}
 
@@ -39,17 +38,26 @@ export class SpacesListPage implements OnInit {
     return this.authService.isAdmin();
   }
 
+  private buildSpacesStream(): Observable<Space[]> {
+    return defer(() => {
+      this.isLoading = true;
+
+      return this.spacesService.getSpaces().pipe(
+        catchError(() => {
+          this.notification.showError(
+            'No se pudieron cargar los espacios'
+          );
+          return of([] as Space[]);
+        }),
+        finalize(() => {
+          this.isLoading = false;
+        })
+      );
+    });
+  }
+
   loadSpaces(): void {
-    this.spaces$ = this.spacesService.getSpaces();
-  }
-
-  searchSpaces(): void {
-    const { type, capacity, date } = this.searchParams;
-    this.spaces$ = this.spacesService.getSpaces(type, capacity, date);
-  }
-
-  viewSpaceDetails(spaceId: number): void {
-    this.router.navigate(['/spaces', spaceId]);
+    this.spaces$ = this.buildSpacesStream();
   }
 
   goToReservationForm(spaceId: number): void {
