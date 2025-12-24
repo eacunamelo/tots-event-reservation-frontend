@@ -1,59 +1,105 @@
-# TotsEventReservationFrontend
+# Frontend — App de Reserva de Espacios (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+Aplicación web desarrollada en **Angular** para explorar espacios (salas), autenticarse y gestionar **reservas** consumiendo una **API REST** externa.
 
-## Development server
+> Este repositorio corresponde **exclusivamente al FRONTEND**.  
+> El backend se encuentra en **otro repositorio**.
 
-To start a local development server, run:
+---
 
+## ✅ Funcionalidades
+
+- Registro e inicio de sesión
+- Listado de espacios
+- Detalle de espacio
+- Creación / edición / eliminación de reservas
+- Validaciones en formularios (cliente)
+- Notificaciones al usuario (éxito / error)
+
+---
+
+## 🧰 Tecnologías
+
+- Angular (Standalone Components)
+- TypeScript
+- Angular Router
+- Reactive Forms
+- HttpClient
+- RxJS
+- CSS (estilos por componente + global)
+
+---
+
+## 🗂️ Estructura (resumen)
+
+```
+src/
+  app/
+    auth/
+    spaces/
+    reservations/
+    core/
+    shared/
+  environments/
+  main.ts
+  styles.css
+```
+
+---
+
+## ▶️ Cómo ejecutar (local)
+
+### Requisitos
+- Node.js 18+
+- Angular CLI
+
+### Instalar dependencias
+```bash
+npm install
+```
+
+### Levantar en desarrollo
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Abrir:
+- `http://localhost:4200`
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🔧 Configuración de API
 
-```bash
-ng generate component component-name
+El endpoint base se configura en:
+- `src/environments/environment.ts`
+
+Ejemplo:
+```ts
+export const environment = {
+  apiUrl: 'http://localhost:8000/api/'
+};
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## 🎯 Puntos del feedback abordados / por abordar
 
-## Building
+**Ya cubierto:**
+- Readme incluido y con pasos claros
+- Proyecto organizado por features
+- Formularios con validaciones base y notificaciones
 
-To build the project run:
+**Mejoras planificadas (frontend):**
+- Mejorar UX de loading (spinner/skeleton) en listados, detalle y submit
+- Confirmación al eliminar (modal)
+- Mejor manejo de errores de formulario (marcar campos, mensajes claros)
+- Refactor de servicios/métodos largos
+- Modernización de RxJS (evitar `subscribe` anidados, usar `pipe`, `catchError`, `finalize`, etc.)
+- Lazy Loading por rutas (opcional, suma)
 
-```bash
-ng build
-```
+> Nota: **SCSS no se usará** en esta versión (no es obligatorio para el desafío).
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 👤 Autor
+Prueba técnica — Frontend Angular
