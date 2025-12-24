@@ -7,31 +7,31 @@
       Cargando espacios...
     </div>
 
-    <div class="spaces-grid" *ngIf="!isLoading">
+    <ng-container *ngIf="spaces$ | async as spaces">
 
-      <div
-        class="space-card add-space-card"
-        *ngIf="isAdmin()"
-      >
-        <button
-          type="button"
-          class="add-space-btn"
-          (click)="goToCreateSpace()"
+      <div class="spaces-grid">
+
+        <div
+          class="space-card add-space-card"
+          *ngIf="isAdmin()"
         >
-          <i class="pi pi-plus"></i>
-        </button>
+          <button
+            type="button"
+            class="add-space-btn"
+            (click)="goToCreateSpace()"
+          >
+            <i class="pi pi-plus"></i>
+          </button>
 
-        <h3>Crear espacio</h3>
-        <p class="description">
-          Agrega un nuevo espacio para reservas
-        </p>
-      </div>
-
-      <ng-container *ngIf="spaces$ | async as spaces">
+          <h3>Crear espacio</h3>
+          <p class="description">
+            Agrega un nuevo espacio para reservas
+          </p>
+        </div>
 
         <div
           class="empty-state"
-          *ngIf="spaces.length === 0"
+          *ngIf="!isLoading && spaces.length === 0"
         >
           No hay espacios disponibles
         </div>
@@ -79,9 +79,9 @@
 
         </div>
 
-      </ng-container>
+      </div>
 
-    </div>
+    </ng-container>
 
   </div>
 </main>

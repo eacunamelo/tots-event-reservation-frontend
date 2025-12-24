@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Observable, of, defer } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
 import { SpacesService } from '../services/space.service';
@@ -38,26 +38,20 @@ export class SpacesListPage implements OnInit {
     return this.authService.isAdmin();
   }
 
-  private buildSpacesStream(): Observable<Space[]> {
-    return defer(() => {
-      this.isLoading = true;
-
-      return this.spacesService.getSpaces().pipe(
-        catchError(() => {
-          this.notification.showError(
-            'No se pudieron cargar los espacios'
-          );
-          return of([] as Space[]);
-        }),
-        finalize(() => {
-          this.isLoading = false;
-        })
-      );
-    });
-  }
-
   loadSpaces(): void {
-    this.spaces$ = this.buildSpacesStream();
+    this.isLoading = true;
+
+    this.spaces$ = this.spacesService.getSpaces().pipe(
+      catchError(() => {
+        this.notification.showError(
+          'No se pudieron cargar los espacios'
+        );
+        return of([] as Space[]);
+      }),
+      finalize(() => {
+        this.isLoading = false;
+      })
+    );
   }
 
   goToReservationForm(spaceId: number): void {

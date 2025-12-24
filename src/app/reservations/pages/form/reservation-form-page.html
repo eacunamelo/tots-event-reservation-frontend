@@ -1,73 +1,83 @@
 <section class="reservation-section">
-  <div class="reservation-card">
 
-    <h1 class="title">Reservar Espacio</h1>
-
-    <form [formGroup]="reservationForm" (ngSubmit)="submit()">
-
-      <div class="form-row">
-        <label>Espacio</label>
-        <input
-          type="text"
-          class="readonly-input"
-          [value]="(space$ | async)?.name"
-          readonly
-        />
-      </div>
-
-      <div class="form-row">
-        <label>Nombre del evento</label>
-        <input
-          type="text"
-          formControlName="event_name"
-          placeholder="Ej. Reunión de equipo"
-        />
-        <span
-          class="error"
-          *ngIf="reservationForm.get('event_name')?.touched &&
-                 reservationForm.get('event_name')?.invalid">
-          Este campo es obligatorio
-        </span>
-      </div>
-
-      <div class="form-row date-row">
-        <div class="date-field">
-          <label>Inicio</label>
-          <input
-            type="datetime-local"
-            formControlName="start_time"
-            class="date-input"
-          />
-        </div>
-
-        <div class="date-field">
-          <label>Fin</label>
-          <input
-            type="datetime-local"
-            formControlName="end_time"
-            class="date-input"
-          />
-        </div>
-      </div>
-
-      <div class="occupied-box" *ngIf="reservedSlots.length > 0">
-        <p class="occupied-title">Horarios no disponibles</p>
-        <ul>
-          <li *ngFor="let r of reservedSlots">
-            {{ r.start_time | date:'dd/MM/yyyy HH:mm' }} –
-            {{ r.end_time | date:'HH:mm' }}
-          </li>
-        </ul>
-      </div>
-
-      <button
-        type="submit"
-        class="submit-btn"
-        [disabled]="reservationForm.invalid">
-        Reservar
-      </button>
-
-    </form>
-
+  <div class="loading" *ngIf="isLoading">
+    Cargando información del espacio...
   </div>
+
+  <ng-container *ngIf="space$ | async as space">
+
+    <div class="reservation-card">
+
+      <h1 class="title">Reservar Espacio</h1>
+
+      <form [formGroup]="reservationForm" (ngSubmit)="submit()">
+
+        <div class="form-row">
+          <label>Espacio</label>
+          <input
+            type="text"
+            class="readonly-input"
+            [value]="space.name"
+            readonly
+          />
+        </div>
+
+        <div class="form-row">
+          <label>Nombre del evento</label>
+          <input
+            type="text"
+            formControlName="event_name"
+            placeholder="Ej. Reunión de equipo"
+          />
+          <span
+            class="error"
+            *ngIf="reservationForm.get('event_name')?.touched &&
+                   reservationForm.get('event_name')?.invalid">
+            Este campo es obligatorio
+          </span>
+        </div>
+
+        <div class="form-row date-row">
+          <div class="date-field">
+            <label>Inicio</label>
+            <input
+              type="datetime-local"
+              formControlName="start_time"
+              class="date-input"
+            />
+          </div>
+
+          <div class="date-field">
+            <label>Fin</label>
+            <input
+              type="datetime-local"
+              formControlName="end_time"
+              class="date-input"
+            />
+          </div>
+        </div>
+
+        <div class="occupied-box" *ngIf="reservedSlots.length > 0">
+          <p class="occupied-title">Horarios no disponibles</p>
+          <ul>
+            <li *ngFor="let r of reservedSlots">
+              {{ r.start_time | date:'dd/MM/yyyy HH:mm' }} –
+              {{ r.end_time | date:'HH:mm' }}
+            </li>
+          </ul>
+        </div>
+
+        <button
+          type="submit"
+          class="submit-btn"
+          [disabled]="reservationForm.invalid || isSubmitting"
+        >
+          {{ isSubmitting ? 'Reservando...' : 'Reservar' }}
+        </button>
+
+      </form>
+
+    </div>
+
+  </ng-container>
 </section>

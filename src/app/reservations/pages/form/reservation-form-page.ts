@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, of, forkJoin } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 
 import { Space } from '../../../space/models/space.model';
 import { Reservation, CreateReservationDTO } from '../../models/reservations.model';
@@ -29,6 +30,9 @@ export class ReservationFormPage implements OnInit {
   spaceId!: number;
   space$!: Observable<Space>;
   reservedSlots: Reservation[] = [];
+
+  isLoading = false;
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -57,30 +61,43 @@ export class ReservationFormPage implements OnInit {
     });
 
     this.space$ = this.spacesService.getSpaceById(this.spaceId);
-    this.loadReservations();
+
+    this.loadInitialData();
   }
 
-  private loadReservations(): void {
-    this.reservationsService
-      .getBySpace(this.spaceId)
-      .subscribe({
-        next: (res) => this.reservedSlots = res,
-        error: () => {
+  private loadInitialData(): void {
+    this.isLoading = true;
+
+    forkJoin({
+      reservations: this.reservationsService.getBySpace(this.spaceId)
+    })
+      .pipe(
+        catchError(() => {
           this.notification.showError(
-            'No se pudieron cargar los horarios ocupados'
+            'No se pudo cargar la información del espacio'
           );
-        }
+          return of({ reservations: [] as Reservation[] });
+        }),
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe(({ reservations }) => {
+        this.reservedSlots = reservations;
       });
   }
 
   submit(): void {
     if (this.reservationForm.invalid) {
+      this.reservationForm.markAllAsTouched();
       this.notification.showWarn(
         'Completa todos los campos obligatorios',
         'Formulario incompleto'
       );
       return;
     }
+
+    this.isSubmitting = true;
 
     const payload: CreateReservationDTO = {
       space_id: this.spaceId,
@@ -89,29 +106,35 @@ export class ReservationFormPage implements OnInit {
       end_time: this.reservationForm.value.end_time
     };
 
-    this.reservationsService.createReservation(payload).subscribe({
-      next: () => {
-        this.notification.showSuccess(
-          'La reserva se creó correctamente',
-          'Reserva confirmada'
-        );
-        this.router.navigate(['/reservations']);
-      },
-      error: (error) => {
-        if (error.status === 409) {
-          this.notification.showWarn(
-            error.error?.message || 'El horario seleccionado ya está ocupado',
-            'Horario no disponible'
+    this.reservationsService.createReservation(payload)
+      .pipe(
+        finalize(() => {
+          this.isSubmitting = false;
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.notification.showSuccess(
+            'La reserva se creó correctamente',
+            'Reserva confirmada'
           );
-          return;
-        }
+          this.router.navigate(['/reservations']);
+        },
+        error: (error) => {
+          if (error.status === 409) {
+            this.notification.showWarn(
+              error.error?.message || 'El horario seleccionado ya está ocupado',
+              'Horario no disponible'
+            );
+            return;
+          }
 
-        this.notification.showError(
-          'Ocurrió un error inesperado al crear la reserva',
-          'Error'
-        );
-      }
-    });
+          this.notification.showError(
+            'Ocurrió un error inesperado al crear la reserva',
+            'Error'
+          );
+        }
+      });
   }
 
   isSlotUnavailable(date: string): boolean {
