@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '../auth/guards/auth.guard';
+import { adminGuard } from '../auth/guards/admin.guard';
 
 export const SPACE_ROUTES: Routes = [
   {
@@ -9,14 +11,17 @@ export const SPACE_ROUTES: Routes = [
   },
   {
     path: 'new',
+    canActivate: [authGuard, adminGuard],
     loadComponent: () =>
       import('../space/page/form/space-form-page')
         .then(m => m.SpaceFormPage)
   },
   {
     path: 'edit/:id',
+    canActivate: [authGuard, adminGuard],
     loadComponent: () =>
       import('../space/page/form/space-form-page')
         .then(m => m.SpaceFormPage)
   }
 ];
+

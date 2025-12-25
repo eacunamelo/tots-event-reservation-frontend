@@ -1,67 +1,56 @@
 <section class="space-form-section">
 
-  <div class="loading" *ngIf="isLoading">
-    Cargando información del espacio...
-  </div>
+  <ng-container *ngIf="vm$ | async as vm">
 
-  <div class="space-form-card" *ngIf="!isLoading">
+    <div class="loading" *ngIf="vm.loading">
+      Cargando información del espacio...
+    </div>
 
-    <h1 class="title">
-      {{ isEditMode ? 'Editar espacio' : 'Crear espacio' }}
-    </h1>
+    <div class="space-form-card" *ngIf="!vm.loading">
 
-    <form [formGroup]="spaceForm" (ngSubmit)="submit()">
+      <h1 class="title">
+        {{ isEditMode ? 'Editar espacio' : 'Crear espacio' }}
+      </h1>
 
-      <div class="form-row">
-        <label>Nombre</label>
-        <input type="text" formControlName="name" />
-      </div>
+      <form [formGroup]="spaceForm" (ngSubmit)="submit()">
 
-      <div class="form-row">
-        <label>Descripción</label>
-        <textarea rows="3" formControlName="description"></textarea>
-      </div>
+        <div class="form-row">
+          <label>Nombre</label>
+          <input type="text" formControlName="name" />
+        </div>
 
-      <div class="form-row">
-        <label>Capacidad</label>
-        <input type="number" formControlName="capacity" />
-      </div>
+        <div class="form-row">
+          <label>Descripción</label>
+          <textarea rows="3" formControlName="description"></textarea>
+        </div>
 
-      <div class="image-preview" *ngIf="imagePreview">
-        <img [src]="imagePreview" alt="Preview" />
-      </div>
+        <div class="form-row">
+          <label>Capacidad</label>
+          <input type="number" formControlName="capacity" />
+        </div>
 
-      <div class="form-row file-row">
-        <label class="file-label">
-          <input
-            type="file"
-            accept="image/*"
-            (change)="onFileSelected($event)"
-            hidden
-          />
-          <span class="file-btn">
-            <i class="pi pi-image"></i>
-            Seleccionar imagen
-          </span>
-        </label>
+        <div class="image-preview" *ngIf="imagePreview">
+          <img [src]="imagePreview" alt="Preview" />
+        </div>
 
-        <span class="file-name" *ngIf="selectedFile">
-          {{ selectedFile.name }}
-        </span>
-      </div>
+        <div class="form-row file-row">
+          <label class="file-label">
+            <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+            <span class="file-btn">Seleccionar imagen</span>
+          </label>
+        </div>
 
-      <button
-        type="submit"
-        class="submit-btn"
-        [disabled]="isSubmitting"
-      >
-        {{ isSubmitting
-          ? (isEditMode ? 'Actualizando...' : 'Creando...')
-          : (isEditMode ? 'Actualizar' : 'Crear')
-        }}
-      </button>
+        <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+          {{ isSubmitting
+            ? (isEditMode ? 'Actualizando...' : 'Creando...')
+            : (isEditMode ? 'Actualizar' : 'Crear')
+          }}
+        </button>
 
-    </form>
+      </form>
 
-  </div>
+    </div>
+
+  </ng-container>
+
 </section>

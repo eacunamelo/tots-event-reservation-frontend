@@ -2,10 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { switchMap, tap, catchError, map, startWith } from 'rxjs/operators';
 
 import { SpacesService } from '../../services/space.service';
 import { Space } from '../../models/space.model';
 import { NotificationService } from '../../../core/services/notification.service';
+
+type Vm = { loading: boolean; space: Space | null };
 
 @Component({
   standalone: true,
@@ -18,15 +22,14 @@ export class SpaceFormPage implements OnInit {
 
   spaceForm!: FormGroup;
 
+  vm$!: Observable<Vm>;
+
   spaceId: number | null = null;
   isEditMode = false;
-
-  space: Space | null = null;
 
   selectedFile: File | null = null;
   imagePreview: string | null = null;
 
-  isLoading = false; 
   isSubmitting = false;
 
   constructor(
@@ -44,41 +47,46 @@ export class SpaceFormPage implements OnInit {
       capacity: ['', [Validators.required, Validators.min(1)]]
     });
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.isEditMode = true;
-      this.spaceId = +id;
-      this.loadSpace(this.spaceId);
-    }
-  }
+    this.vm$ = this.route.paramMap.pipe(
+      switchMap(params => {
+        const id = params.get('id');
 
-  private loadSpace(id: number): void {
-    this.isLoading = true;
+        if (!id) {
+          this.isEditMode = false;
+          this.spaceId = null;
 
-    this.spacesService.getSpaceById(id).subscribe({
-      next: (space) => {
-        this.space = space;
+          this.spaceForm.reset({ name: '', description: '', capacity: '' });
+          this.selectedFile = null;
+          this.imagePreview = null;
 
-        this.spaceForm.patchValue({
-          name: space.name,
-          description: space.description,
-          capacity: space.capacity
-        });
+          return of({ loading: false, space: null } as Vm);
+        }
 
-        this.imagePreview = space.image_url;
-      },
-      error: () => {
-        this.notification.showError('No se pudo cargar el espacio');
-      },
-      complete: () => {
-        this.isLoading = false;
-      }
-    });
+        this.isEditMode = true;
+        this.spaceId = +id;
+
+        return this.spacesService.getSpaceById(this.spaceId).pipe(
+          tap(space => {
+            this.spaceForm.patchValue({
+              name: space.name,
+              description: space.description,
+              capacity: space.capacity
+            });
+            this.imagePreview = space.image_url;
+          }),
+          map(space => ({ loading: false, space } as Vm)),
+          catchError(() => {
+            this.notification.showError('No se pudo cargar el espacio');
+            return of({ loading: false, space: null } as Vm);
+          }),
+          startWith({ loading: true, space: null } as Vm)
+        );
+      })
+    );
   }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-
     if (!input.files || input.files.length === 0) return;
 
     this.selectedFile = input.files[0];

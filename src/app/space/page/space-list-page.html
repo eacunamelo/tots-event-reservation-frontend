@@ -3,11 +3,35 @@
 
     <h2 class="section-title">Espacios disponibles</h2>
 
-    <div class="loading" *ngIf="isLoading">
-      Cargando espacios...
+    <form
+      class="filters"
+      [formGroup]="filterForm"
+    >
+      <input
+        type="text"
+        placeholder="Buscar por nombre o descripción"
+        formControlName="search"
+      />
+
+      <input
+        type="number"
+        placeholder="Capacidad mínima"
+        formControlName="minCapacity"
+        min="1"
+      />
+    </form>
+
+    <div class="spaces-grid" *ngIf="isLoading">
+      <div class="space-card skeleton-card" *ngFor="let i of [1,2,3]">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-line title"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line small"></div>
+        <div class="skeleton-button"></div>
+      </div>
     </div>
 
-    <ng-container *ngIf="spaces$ | async as spaces">
+    <ng-container *ngIf="filteredSpaces$ | async as spaces">
 
       <div class="spaces-grid">
 

@@ -101,5 +101,33 @@ export const environment = {
 
 ---
 
-## 👤 Autor
+### MC-Table (MC Kit)
+
+Se intentó integrar MC-Table desde el repositorio oficial de MC Kit
+(https://github.com/matiascamiletti/mc-kit), tal como se indica en el requerimiento.
+
+Durante la integración se detectó que MC Kit no se encuentra publicado como librería
+distribuible y presenta dependencias internas
+(por ejemplo `@mckit/core`), lo que impide su consumo directo en una aplicación Angular externa.
+
+Por este motivo, el listado fue implementado mediante una estructura desacoplada,
+basada en Observables y templates, de forma que la integración de MC-Table
+sea inmediata en un entorno donde la librería se encuentre correctamente distribuida.
+
+
+## 🧪 Testing
+
+Se implementaron tests unitarios utilizando **Vitest**.
+
+- Se testea la lógica de negocio de componentes standalone
+- Los servicios son mockeados con `vi.fn()`
+- No se renderizan templates para evitar dependencias del Angular compiler
+- Tests enfocados en comportamiento, estado y flujo de datos
+- Ejecución rápida y desacoplada del DOM
+
+### Ejecutar tests
+```bash
+npx vitest
+
+## 👤 Autor  
 Prueba técnica — Frontend Angular

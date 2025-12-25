@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Observable, of, forkJoin } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError, finalize, map } from 'rxjs/operators';
 
 import { Space } from '../../../space/models/space.model';
 import { Reservation, CreateReservationDTO } from '../../models/reservations.model';
@@ -17,19 +17,18 @@ import { NotificationService } from '../../../core/services/notification.service
   selector: 'app-reservation-form-page',
   templateUrl: './reservation-form-page.html',
   styleUrls: ['./reservation-form-page.css'],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    DatePipe
-  ]
+  imports: [CommonModule, ReactiveFormsModule, DatePipe]
 })
 export class ReservationFormPage implements OnInit {
 
   reservationForm!: FormGroup;
 
   spaceId!: number;
-  space$!: Observable<Space>;
-  reservedSlots: Reservation[] = [];
+
+  data$!: Observable<{
+    space: Space;
+    reservations: Reservation[];
+  }>;
 
   isLoading = false;
   isSubmitting = false;
@@ -60,40 +59,29 @@ export class ReservationFormPage implements OnInit {
       end_time: ['', Validators.required]
     });
 
-    this.space$ = this.spacesService.getSpaceById(this.spaceId);
-
-    this.loadInitialData();
+    this.loadData();
   }
 
-  private loadInitialData(): void {
+  private loadData(): void {
     this.isLoading = true;
 
-    forkJoin({
+    this.data$ = forkJoin({
+      space: this.spacesService.getSpaceById(this.spaceId),
       reservations: this.reservationsService.getBySpace(this.spaceId)
-    })
-      .pipe(
-        catchError(() => {
-          this.notification.showError(
-            'No se pudo cargar la información del espacio'
-          );
-          return of({ reservations: [] as Reservation[] });
-        }),
-        finalize(() => {
-          this.isLoading = false;
-        })
-      )
-      .subscribe(({ reservations }) => {
-        this.reservedSlots = reservations;
-      });
+    }).pipe(
+      catchError(() => {
+        this.notification.showError('No se pudo cargar la información');
+        return of({ space: null as any, reservations: [] });
+      }),
+      finalize(() => {
+        this.isLoading = false;
+      })
+    );
   }
 
   submit(): void {
     if (this.reservationForm.invalid) {
       this.reservationForm.markAllAsTouched();
-      this.notification.showWarn(
-        'Completa todos los campos obligatorios',
-        'Formulario incompleto'
-      );
       return;
     }
 
@@ -101,44 +89,24 @@ export class ReservationFormPage implements OnInit {
 
     const payload: CreateReservationDTO = {
       space_id: this.spaceId,
-      event_name: this.reservationForm.value.event_name,
-      start_time: this.reservationForm.value.start_time,
-      end_time: this.reservationForm.value.end_time
+      ...this.reservationForm.value
     };
 
     this.reservationsService.createReservation(payload)
-      .pipe(
-        finalize(() => {
-          this.isSubmitting = false;
-        })
-      )
+      .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
         next: () => {
-          this.notification.showSuccess(
-            'La reserva se creó correctamente',
-            'Reserva confirmada'
-          );
+          this.notification.showSuccess('Reserva creada correctamente');
           this.router.navigate(['/reservations']);
         },
-        error: (error) => {
-          if (error.status === 409) {
-            this.notification.showWarn(
-              error.error?.message || 'El horario seleccionado ya está ocupado',
-              'Horario no disponible'
-            );
-            return;
-          }
-
-          this.notification.showError(
-            'Ocurrió un error inesperado al crear la reserva',
-            'Error'
-          );
+        error: () => {
+          this.notification.showError('Error al crear la reserva');
         }
       });
   }
 
-  isSlotUnavailable(date: string): boolean {
-    return this.reservedSlots.some(
+  isSlotUnavailable(date: string, reservations: Reservation[]): boolean {
+    return reservations.some(
       r => date >= r.start_time && date < r.end_time
     );
   }

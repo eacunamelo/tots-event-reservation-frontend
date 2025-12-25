@@ -1,10 +1,6 @@
 <section class="reservation-section">
 
-  <div class="loading" *ngIf="isLoading">
-    Cargando información del espacio...
-  </div>
-
-  <ng-container *ngIf="space$ | async as space">
+  <ng-container *ngIf="data$ | async as data; else skeleton">
 
     <div class="reservation-card">
 
@@ -17,7 +13,7 @@
           <input
             type="text"
             class="readonly-input"
-            [value]="space.name"
+            [value]="data.space.name"
             readonly
           />
         </div>
@@ -57,10 +53,13 @@
           </div>
         </div>
 
-        <div class="occupied-box" *ngIf="reservedSlots.length > 0">
+        <div
+          class="occupied-box"
+          *ngIf="data.reservations.length > 0"
+        >
           <p class="occupied-title">Horarios no disponibles</p>
           <ul>
-            <li *ngFor="let r of reservedSlots">
+            <li *ngFor="let r of data.reservations">
               {{ r.start_time | date:'dd/MM/yyyy HH:mm' }} –
               {{ r.end_time | date:'HH:mm' }}
             </li>
@@ -80,4 +79,19 @@
     </div>
 
   </ng-container>
+
+  <ng-template #skeleton>
+    <div class="reservation-card skeleton-card">
+      <div class="skeleton-title"></div>
+      <div class="skeleton-field"></div>
+      <div class="skeleton-field"></div>
+      <div class="skeleton-row">
+        <div class="skeleton-field"></div>
+        <div class="skeleton-field"></div>
+      </div>
+      <div class="skeleton-box"></div>
+      <div class="skeleton-button"></div>
+    </div>
+  </ng-template>
+
 </section>

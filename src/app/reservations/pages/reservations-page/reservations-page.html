@@ -2,51 +2,58 @@
 
   <h2 class="page-title">Mis Reservas</h2>
 
-  <div class="loading" *ngIf="isLoading">
-    <p>Cargando reservas...</p>
+  <div class="table-wrapper" *ngIf="isLoading$ | async">
+    <table class="reservations-table">
+      <tbody>
+        <tr class="skeleton-row" *ngFor="let i of [1,2,3]">
+          <td><div class="skeleton-line"></div></td>
+          <td><div class="skeleton-line small"></div></td>
+          <td><div class="skeleton-line small"></div></td>
+          <td><div class="skeleton-btn"></div></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <ng-container *ngIf="!isLoading">
+  <ng-container *ngIf="reservations$ | async as reservations">
 
-    <ng-container *ngIf="reservations$ | async as reservations">
+    <div class="table-wrapper"
+         *ngIf="!(isLoading$ | async) && reservations.length > 0">
 
-      <div class="table-wrapper" *ngIf="reservations.length > 0">
-        <table class="reservations-table">
-          <thead>
-            <tr>
-              <th>Evento</th>
-              <th>Inicio</th>
-              <th>Fin</th>
-              <th class="actions-col"></th>
-            </tr>
-          </thead>
+      <table class="reservations-table">
+        <thead>
+          <tr>
+            <th>Evento</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th class="actions-col"></th>
+          </tr>
+        </thead>
 
-          <tbody>
-            <tr *ngFor="let r of reservations">
-              <td class="event">
-                <i class="pi pi-calendar"></i>
-                {{ r.event_name }}
-              </td>
-              <td>{{ r.start_time | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td>{{ r.end_time | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td class="actions">
-                <button
-                  class="btn-delete"
-                  (click)="confirmDelete(r.id)">
-                  Cancelar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <tbody>
+          <tr *ngFor="let r of reservations">
+            <td class="event">
+              <i class="pi pi-calendar"></i>
+              {{ r.event_name }}
+            </td>
+            <td>{{ r.start_time | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ r.end_time | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="actions">
+              <button class="btn-delete" (click)="confirmDelete(r.id)">
+                Cancelar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-      <div class="empty-state" *ngIf="reservations.length === 0">
-        <i class="pi pi-inbox"></i>
-        <p>No tienes reservas registradas</p>
-      </div>
+    </div>
 
-    </ng-container>
+    <div class="empty-state"
+         *ngIf="!(isLoading$ | async) && reservations.length === 0">
+      <i class="pi pi-inbox"></i>
+      <p>No tienes reservas registradas</p>
+    </div>
 
   </ng-container>
 
