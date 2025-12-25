@@ -1,9 +1,22 @@
 # Frontend — App de Reserva de Espacios (Angular)
 
-Aplicación web desarrollada en **Angular** para explorar espacios (salas), autenticarse y gestionar **reservas** consumiendo una **API REST** externa.
+Aplicación web desarrollada en **Angular** para la exploración de espacios (salas), autenticación de usuarios y gestión de **reservas**, consumiendo una **API REST externa**.
 
-> Este repositorio corresponde **exclusivamente al FRONTEND**.  
-> El backend se encuentra en **otro repositorio**.
+> 📌 Este repositorio corresponde **exclusivamente al FRONTEND**.  
+> El backend se encuentra en un **repositorio independiente**.
+
+---
+
+## 🧭 Descripción general
+
+La aplicación permite a los usuarios:
+
+- Autenticarse en el sistema
+- Visualizar espacios disponibles
+- Crear, editar y cancelar reservas
+- Recibir feedback visual ante acciones exitosas o errores
+
+El proyecto fue desarrollado utilizando **Angular moderno (Standalone Components)**, con una arquitectura organizada por **features**, priorizando claridad, mantenibilidad y buenas prácticas.
 
 ---
 
@@ -12,13 +25,15 @@ Aplicación web desarrollada en **Angular** para explorar espacios (salas), aute
 - Registro e inicio de sesión
 - Listado de espacios
 - Detalle de espacio
-- Creación / edición / eliminación de reservas
-- Validaciones en formularios (cliente)
+- Creación, edición y eliminación de reservas
+- Validaciones de formularios del lado cliente
 - Notificaciones al usuario (éxito / error)
+- Estados de carga con **Skeleton Loaders**
+- Modal de confirmación al eliminar reservas
 
 ---
 
-## 🧰 Tecnologías
+## 🧰 Tecnologías utilizadas
 
 - Angular (Standalone Components)
 - TypeScript
@@ -26,52 +41,58 @@ Aplicación web desarrollada en **Angular** para explorar espacios (salas), aute
 - Reactive Forms
 - HttpClient
 - RxJS
-- CSS (estilos por componente + global)
+- CSS (estilos globales y por componente)
+- Vitest (testing unitario)
 
 ---
 
-## 🗂️ Estructura (resumen)
+## 🗂️ Estructura del proyecto
 
 ```
 src/
-  app/
-    auth/
-    spaces/
-    reservations/
-    core/
-    shared/
-  environments/
-  main.ts
-  styles.css
+ ├─ app/
+ │   ├─ auth/
+ │   ├─ spaces/
+ │   ├─ reservations/
+ │   ├─ core/
+ │   └─ shared/
+ ├─ environments/
+ ├─ main.ts
+ └─ styles.css
 ```
 
 ---
 
-## ▶️ Cómo ejecutar (local)
+## ▶️ Ejecución en entorno local
 
 ### Requisitos
 - Node.js 18+
 - Angular CLI
 
-### Instalar dependencias
+### Instalación de dependencias
 ```bash
 npm install
 ```
 
-### Levantar en desarrollo
+### Ejecutar en desarrollo
 ```bash
 ng serve
 ```
 
-Abrir:
-- `http://localhost:4200`
+Abrir en el navegador:
+```
+http://localhost:4200
+```
 
 ---
 
-## 🔧 Configuración de API
+## 🔧 Configuración de la API
 
-El endpoint base se configura en:
-- `src/environments/environment.ts`
+El endpoint base del backend se configura en:
+
+```
+src/environments/environment.ts
+```
 
 Ejemplo:
 ```ts
@@ -82,52 +103,85 @@ export const environment = {
 
 ---
 
-## 🎯 Puntos del feedback abordados / por abordar
+## 🧠 Decisiones técnicas relevantes
 
-**Ya cubierto:**
-- Readme incluido y con pasos claros
-- Proyecto organizado por features
-- Formularios con validaciones base y notificaciones
+### RxJS
+- Uso de `pipe`, `catchError`, `finalize` y `forkJoin`
+- Evita `subscribe` anidados
+- Separación clara entre lógica y presentación
+- Flujos de datos predecibles
 
-**Mejoras planificadas (frontend):**
-- Mejorar UX de loading (spinner/skeleton) en listados, detalle y submit
-- Confirmación al eliminar (modal)
-- Mejor manejo de errores de formulario (marcar campos, mensajes claros)
-- Refactor de servicios/métodos largos
-- Modernización de RxJS (evitar `subscribe` anidados, usar `pipe`, `catchError`, `finalize`, etc.)
-- Lazy Loading por rutas (opcional, suma)
+### UX y Loading
+- Implementación de **Skeleton Loaders**
+- Mejora en percepción de rendimiento
+- Corrección de estados de carga bloqueados
+- Eliminación de errores de ciclo de vida (NG0100)
 
-> Nota: **SCSS no se usará** en esta versión (no es obligatorio para el desafío).
+### Formularios
+- Formularios reactivos
+- Validaciones visibles
+- Mensajes claros sin depender de consola
+
+### Eliminación de reservas
+- Modal de confirmación
+- Prevención de acciones accidentales
+- Feedback inmediato al usuario
 
 ---
 
-### MC-Table (MC Kit)
-
-Se intentó integrar MC-Table desde el repositorio oficial de MC Kit
-(https://github.com/matiascamiletti/mc-kit), tal como se indica en el requerimiento.
-
-Durante la integración se detectó que MC Kit no se encuentra publicado como librería
-distribuible y presenta dependencias internas
-(por ejemplo `@mckit/core`), lo que impide su consumo directo en una aplicación Angular externa.
-
-Por este motivo, el listado fue implementado mediante una estructura desacoplada,
-basada en Observables y templates, de forma que la integración de MC-Table
-sea inmediata en un entorno donde la librería se encuentre correctamente distribuida.
-
-
 ## 🧪 Testing
 
-Se implementaron tests unitarios utilizando **Vitest**.
+Se implementaron tests unitarios con **Vitest**.
 
-- Se testea la lógica de negocio de componentes standalone
-- Los servicios son mockeados con `vi.fn()`
-- No se renderizan templates para evitar dependencias del Angular compiler
-- Tests enfocados en comportamiento, estado y flujo de datos
+### Enfoque
+- Tests de lógica de negocio
+- Servicios mockeados con `vi.fn()`
+- Sin renderizar templates
 - Ejecución rápida y desacoplada del DOM
 
 ### Ejecutar tests
 ```bash
 npx vitest
+```
 
-## 👤 Autor  
+---
+
+## 📋 Nota sobre MC-Table (MC Kit)
+
+Se intentó integrar **MC-Table** desde:
+https://github.com/matiascamiletti/mc-kit
+
+Durante la integración se detectó que:
+- No está publicado como paquete npm distribuible
+- Posee dependencias internas no exportadas (`@mckit/core`)
+
+Esto impide su uso directo desde una app Angular externa.
+
+### Decisión tomada
+El listado fue implementado con una estructura desacoplada basada en Observables y templates,
+dejando la lógica preparada para una futura integración directa.
+
+---
+
+## 📊 Feedback previo — estado actual
+
+### Corregido
+- README completo
+- Eliminación de archivos y componentes vacíos
+- Corrección de errores en consola
+- Mejor UX de loading
+- Modal de confirmación al eliminar
+- Validaciones visibles
+- Refactor de RxJS
+- Tests unitarios implementados
+
+### Opcional / no requerido
+- SSR
+- Lazy Loading por rutas
+- Uso de SCSS
+
+---
+
+## 👤 Autor
+
 Prueba técnica — Frontend Angular
