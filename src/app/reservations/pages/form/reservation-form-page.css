@@ -1,18 +1,53 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .reservation-section {
   min-height: calc(100vh - 80px);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   background: linear-gradient(180deg, #f9fafb 0%, #eef2f7 100%);
-  padding: 2rem 1rem;
+  padding: 2.5rem 1rem;
 }
 
-.reservation-card {
+.reservation-layout {
   width: 100%;
-  max-width: 520px;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.calendar-panel {
   background: #ffffff;
-  padding: 2.6rem 2.4rem;
   border-radius: 18px;
+  padding: 1.6rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+  max-width: 360px;
+}
+
+.calendar-panel app-space-calendar {
+  transform: scale(0.92);
+  transform-origin: top center;
+}
+
+.panel-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  color: #0f172a;
+}
+
+.form-panel {
+  position: sticky;
+  top: 90px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 2.6rem 2.4rem;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
 }
 
@@ -38,6 +73,7 @@ label {
 }
 
 input {
+  width: 100%;
   height: 46px;
   padding: 0 14px;
   border-radius: 10px;
@@ -62,11 +98,16 @@ input:focus {
 
 .date-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1.2rem;
 }
 
+.date-field {
+  width: 100%;
+}
+
 .date-input {
+  width: 100%;
   height: 48px;
   cursor: pointer;
 }
@@ -114,7 +155,7 @@ input:focus {
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .submit-btn:hover:not(:disabled) {
@@ -124,17 +165,25 @@ input:focus {
 
 .submit-btn:disabled {
   background: #9ca3af;
-  box-shadow: none;
   cursor: not-allowed;
-}
-
-.loading {
-  font-size: 0.95rem;
-  color: #475569;
 }
 
 .skeleton-card {
   pointer-events: none;
+}
+
+.skeleton-title,
+.skeleton-field,
+.skeleton-box,
+.skeleton-button {
+  background: linear-gradient(
+    90deg,
+    #e5e7eb 25%,
+    #f3f4f6 37%,
+    #e5e7eb 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
 }
 
 .skeleton-title {
@@ -142,28 +191,12 @@ input:focus {
   width: 60%;
   margin: 0 auto 2.2rem;
   border-radius: 8px;
-  background: linear-gradient(
-    90deg,
-    #e5e7eb 25%,
-    #f3f4f6 37%,
-    #e5e7eb 63%
-  );
-  background-size: 400% 100%;
-  animation: skeleton-loading 1.4s ease infinite;
 }
 
 .skeleton-field {
   height: 46px;
   border-radius: 10px;
   margin-bottom: 1.4rem;
-  background: linear-gradient(
-    90deg,
-    #e5e7eb 25%,
-    #f3f4f6 37%,
-    #e5e7eb 63%
-  );
-  background-size: 400% 100%;
-  animation: skeleton-loading 1.4s ease infinite;
 }
 
 .skeleton-row {
@@ -176,28 +209,12 @@ input:focus {
   height: 90px;
   margin-top: 1.6rem;
   border-radius: 12px;
-  background: linear-gradient(
-    90deg,
-    #e5e7eb 25%,
-    #f3f4f6 37%,
-    #e5e7eb 63%
-  );
-  background-size: 400% 100%;
-  animation: skeleton-loading 1.4s ease infinite;
 }
 
 .skeleton-button {
   height: 52px;
   margin-top: 2.2rem;
   border-radius: 14px;
-  background: linear-gradient(
-    90deg,
-    #e5e7eb 25%,
-    #f3f4f6 37%,
-    #e5e7eb 63%
-  );
-  background-size: 400% 100%;
-  animation: skeleton-loading 1.4s ease infinite;
 }
 
 @keyframes skeleton-loading {
@@ -208,3 +225,30 @@ input:focus {
     background-position: 0 50%;
   }
 }
+
+@media (max-width: 1024px) {
+  .reservation-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-panel {
+    max-width: 100%;
+  }
+
+  .calendar-panel app-space-calendar {
+    transform: scale(1);
+  }
+
+  .form-panel {
+    position: static;
+  }
+}
+
+.calendar-panel {
+  order: 2;
+}
+
+.form-panel {
+  order: 1;
+}
+

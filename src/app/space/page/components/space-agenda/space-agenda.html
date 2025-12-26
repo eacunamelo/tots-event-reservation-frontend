@@ -1,0 +1,23 @@
+<div class="agenda">
+
+  <h4 class="agenda-title">
+    Agenda — {{ date | date:'dd/MM/yyyy' }}
+  </h4>
+
+  <div class="agenda-list" *ngIf="slots$ | async as slots">
+
+    <div
+      class="agenda-slot"
+      *ngFor="let s of slots"
+      [class.free]="!s.isOccupied"
+      [class.occupied]="s.isOccupied"
+    >
+      <span>{{ s.start }} – {{ s.end }}</span>
+      <span class="status">
+        {{ s.isOccupied ? 'Ocupado' : 'Disponible' }}
+      </span>
+    </div>
+
+  </div>
+
+</div>

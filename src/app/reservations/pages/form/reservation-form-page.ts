@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Observable, of, forkJoin } from 'rxjs';
-import { catchError, finalize, map } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 
 import { Space } from '../../../space/models/space.model';
 import { Reservation, CreateReservationDTO } from '../../models/reservations.model';
@@ -11,18 +11,25 @@ import { Reservation, CreateReservationDTO } from '../../models/reservations.mod
 import { SpacesService } from '../../../space/services/space.service';
 import { ReservationsService } from '../../services/reservation.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { SpaceCalendarComponent } from '../../../space/page/components/space-calendar/space-calendar';
+import { SpaceAgendaComponent } from '../../../space/page/components/space-agenda/space-agenda';
+
 
 @Component({
   standalone: true,
   selector: 'app-reservation-form-page',
   templateUrl: './reservation-form-page.html',
   styleUrls: ['./reservation-form-page.css'],
-  imports: [CommonModule, ReactiveFormsModule, DatePipe]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    SpaceCalendarComponent,
+    SpaceAgendaComponent
+  ]
 })
 export class ReservationFormPage implements OnInit {
 
   reservationForm!: FormGroup;
-
   spaceId!: number;
 
   data$!: Observable<{
@@ -30,7 +37,8 @@ export class ReservationFormPage implements OnInit {
     reservations: Reservation[];
   }>;
 
-  isLoading = false;
+  selectedDay: string | null = null;
+
   isSubmitting = false;
 
   constructor(
@@ -63,8 +71,6 @@ export class ReservationFormPage implements OnInit {
   }
 
   private loadData(): void {
-    this.isLoading = true;
-
     this.data$ = forkJoin({
       space: this.spacesService.getSpaceById(this.spaceId),
       reservations: this.reservationsService.getBySpace(this.spaceId)
@@ -72,9 +78,6 @@ export class ReservationFormPage implements OnInit {
       catchError(() => {
         this.notification.showError('No se pudo cargar la información');
         return of({ space: null as any, reservations: [] });
-      }),
-      finalize(() => {
-        this.isLoading = false;
       })
     );
   }
@@ -105,9 +108,19 @@ export class ReservationFormPage implements OnInit {
       });
   }
 
-  isSlotUnavailable(date: string, reservations: Reservation[]): boolean {
-    return reservations.some(
-      r => date >= r.start_time && date < r.end_time
-    );
+  onDaySelected(date: string): void {
+    this.selectedDay = date;
+
+    this.reservationForm.patchValue({
+      start_time: '',
+      end_time: ''
+    });
+  }
+
+  onSlotSelected(slot: { start: string; end: string }): void {
+    this.reservationForm.patchValue({
+      start_time: slot.start,
+      end_time: slot.end
+    });
   }
 }

@@ -182,6 +182,31 @@ dejando la lógica preparada para una futura integración directa.
 
 ---
 
+## 🆕 Funcionalidades agregadas
+
+### 📅 Calendario de disponibilidad
+- Vista mensual del espacio seleccionado
+- Días disponibles y ocupados diferenciados visualmente
+- Navegación entre meses
+- Permite seleccionar cualquier día, incluso con reservas parciales
+- Tooltip informativo en los días para indicar la acción (*“Mostrar agenda”*)
+
+### 🕒 Agenda diaria por horas
+- Se despliega al seleccionar un día del calendario
+- Muestra bloques horarios del día completo
+- Estados claros por franja:
+  - Disponible
+  - Ocupado (solo en rangos realmente reservados)
+- Soporta reservas parciales dentro de un mismo día
+
+## 🖼️ Screenshots
+- Se agregó una carpeta `/screenshots` dentro del proyecto
+- Incluye capturas de:
+  - Calendario mensual
+  - Agenda diaria por horas
+  - Formulario de reserva
+  - Estados de disponibilidad (ocupado / disponible)
+
 ## 👤 Autor
 
 Prueba técnica — Frontend Angular

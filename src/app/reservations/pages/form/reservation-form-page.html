@@ -2,95 +2,121 @@
 
   <ng-container *ngIf="data$ | async as data; else skeleton">
 
-    <div class="reservation-card">
+    <div class="reservation-layout">
 
-      <h1 class="title">Reservar Espacio</h1>
+      <div class="calendar-panel">
+        <h3 class="panel-title">Disponibilidad</h3>
 
-      <form [formGroup]="reservationForm" (ngSubmit)="submit()">
+        <app-space-calendar
+          [spaceId]="data.space.id"
+          (daySelected)="onDaySelected($event)">
+        </app-space-calendar>
 
-        <div class="form-row">
-          <label>Espacio</label>
-          <input
-            type="text"
-            class="readonly-input"
-            [value]="data.space.name"
-            readonly
-          />
-        </div>
+        <app-space-agenda
+          *ngIf="selectedDay"
+          [spaceId]="data.space.id"
+          [date]="selectedDay"
+          (slotSelected)="onSlotSelected($event)">
+        </app-space-agenda>
+      </div>
 
-        <div class="form-row">
-          <label>Nombre del evento</label>
-          <input
-            type="text"
-            formControlName="event_name"
-            placeholder="Ej. Reunión de equipo"
-          />
-          <span
-            class="error"
-            *ngIf="reservationForm.get('event_name')?.touched &&
-                   reservationForm.get('event_name')?.invalid">
-            Este campo es obligatorio
-          </span>
-        </div>
+      <div class="form-panel">
 
-        <div class="form-row date-row">
-          <div class="date-field">
-            <label>Inicio</label>
+        <h1 class="title">Reservar Espacio</h1>
+
+        <form [formGroup]="reservationForm" (ngSubmit)="submit()">
+
+          <div class="form-row">
+            <label>Espacio</label>
             <input
-              type="datetime-local"
-              formControlName="start_time"
-              class="date-input"
+              type="text"
+              class="readonly-input"
+              [value]="data.space.name"
+              readonly
             />
           </div>
 
-          <div class="date-field">
-            <label>Fin</label>
+          <div class="form-row">
+            <label>Nombre del evento</label>
             <input
-              type="datetime-local"
-              formControlName="end_time"
-              class="date-input"
+              type="text"
+              formControlName="event_name"
+              placeholder="Ej. Reunión de equipo"
             />
+            <span
+              class="error"
+              *ngIf="
+                reservationForm.get('event_name')?.touched &&
+                reservationForm.get('event_name')?.invalid
+              ">
+              Este campo es obligatorio
+            </span>
           </div>
-        </div>
 
-        <div
-          class="occupied-box"
-          *ngIf="data.reservations.length > 0"
-        >
-          <p class="occupied-title">Horarios no disponibles</p>
-          <ul>
-            <li *ngFor="let r of data.reservations">
-              {{ r.start_time | date:'dd/MM/yyyy HH:mm' }} –
-              {{ r.end_time | date:'HH:mm' }}
-            </li>
-          </ul>
-        </div>
+          <div class="form-row date-row">
+            <div class="date-field">
+              <label>Inicio</label>
+              <input
+                type="datetime-local"
+                formControlName="start_time"
+                class="date-input"
+              />
+            </div>
 
-        <button
-          type="submit"
-          class="submit-btn"
-          [disabled]="reservationForm.invalid || isSubmitting"
-        >
-          {{ isSubmitting ? 'Reservando...' : 'Reservar' }}
-        </button>
+            <div class="date-field">
+              <label>Fin</label>
+              <input
+                type="datetime-local"
+                formControlName="end_time"
+                class="date-input"
+              />
+            </div>
+          </div>
 
-      </form>
+          <div
+            class="occupied-box"
+            *ngIf="data.reservations.length > 0"
+          >
+            <p class="occupied-title">Horarios no disponibles</p>
+            <ul>
+              <li *ngFor="let r of data.reservations">
+                {{ r.start_time | date:'dd/MM/yyyy HH:mm' }} –
+                {{ r.end_time | date:'HH:mm' }}
+              </li>
+            </ul>
+          </div>
+
+          <button
+            type="submit"
+            class="submit-btn"
+            [disabled]="reservationForm.invalid || isSubmitting"
+          >
+            {{ isSubmitting ? 'Reservando...' : 'Reservar' }}
+          </button>
+
+        </form>
+
+      </div>
 
     </div>
 
   </ng-container>
 
   <ng-template #skeleton>
-    <div class="reservation-card skeleton-card">
-      <div class="skeleton-title"></div>
-      <div class="skeleton-field"></div>
-      <div class="skeleton-field"></div>
-      <div class="skeleton-row">
+    <div class="reservation-layout">
+      <div class="calendar-panel skeleton-card"></div>
+
+      <div class="form-panel skeleton-card">
+        <div class="skeleton-title"></div>
         <div class="skeleton-field"></div>
         <div class="skeleton-field"></div>
+        <div class="skeleton-row">
+          <div class="skeleton-field"></div>
+          <div class="skeleton-field"></div>
+        </div>
+        <div class="skeleton-box"></div>
+        <div class="skeleton-button"></div>
       </div>
-      <div class="skeleton-box"></div>
-      <div class="skeleton-button"></div>
     </div>
   </ng-template>
 

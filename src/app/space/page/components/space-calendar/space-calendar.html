@@ -1,0 +1,27 @@
+<div class="calendar">
+
+  <div class="calendar-header">
+    <button (click)="prevMonth()">‹</button>
+    <span>{{ year }} - {{ month + 1 | number:'2.0' }}</span>
+    <button (click)="nextMonth()">›</button>
+  </div>
+
+  <div class="weekdays">
+    <span>L</span><span>M</span><span>M</span>
+    <span>J</span><span>V</span><span>S</span><span>D</span>
+  </div>
+
+  <div class="days" *ngIf="days$ | async as days">
+    <div
+      class="day"
+      *ngFor="let d of days"
+      [class.reserved]="d.isReserved"
+      [class.free]="!d.isReserved"
+      title="Mostrar agenda"
+      (click)="selectDay(d)"
+    >
+      {{ d.dayNumber }}
+    </div>
+  </div>
+
+</div>
